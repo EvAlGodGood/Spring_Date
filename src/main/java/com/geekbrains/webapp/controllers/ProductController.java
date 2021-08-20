@@ -8,9 +8,12 @@ import com.geekbrains.webapp.services.CategoryService;
 import com.geekbrains.webapp.services.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,8 +22,11 @@ public class ProductController {
     private final CategoryService categoryService;
 
     @GetMapping("/products")
-    public List<Product> findAll() {
-        return productService.findAll();
+    public Page<ProductDto> findAll(@RequestParam(defaultValue = "1", name = "p") int pageIndex) {
+        if (pageIndex < 1) {
+            pageIndex = 1;
+        }
+        return productService.findAll(pageIndex - 1, 10).map(ProductDto::new);
     }
 
     @GetMapping("/products/{id}")

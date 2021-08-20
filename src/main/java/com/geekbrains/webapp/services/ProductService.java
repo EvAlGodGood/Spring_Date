@@ -1,15 +1,11 @@
 package com.geekbrains.webapp.services;
 
-import com.geekbrains.webapp.dtos.ProductDto;
 import com.geekbrains.webapp.model.Product;
 import com.geekbrains.webapp.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,8 +13,8 @@ import java.util.Optional;
 public class ProductService {
     private final ProductRepository productRepository;
 
-    public List<Product> findAll() {
-        return productRepository.findAll();
+    public Page<Product> findAll(int pageIndex, int pageSize) {
+        return productRepository.findAll(PageRequest.of(pageIndex, pageSize));
     }
 
     public Optional<Product> findById(Long id) {
