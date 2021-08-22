@@ -1,27 +1,35 @@
 angular.module('market-front', []).controller('indexController', function ($scope, $http) {
-    const contextPath = 'http://localhost:8189/market/';
+    const contextPath = 'http://localhost:8189/market/api/';
 
-    var page = 0;
+    var page = 1;
 
-    // $scope.loadProducts = function () {
-    //     $http.get(contextPath + 'products')
-    //         .then(function (response) {
-    //             console.log(response);
-    //             $scope.productsPage = response.data;
-    //         });
-    // };
     $scope.pagePlus = function () {
-        page++;
+        if(page<$scope.productsPage.totalPages){
+            page++;
+        }
         $scope.loadProducts(page);
+
     }
     $scope.pageMinus = function () {
-        page--;
+        if (page>1){
+            page--;
+        }
         $scope.loadProducts(page);
+
     }
 
+    $scope.generatePagesIndexes = function (startPage, endPage) {
+           let arr = [];
+           for (let i = startPage; i < endPage + 1; i++) { //создали список страниц
+               arr.push(i);
+           }
+           return arr;
+        }
+
     $scope.loadProducts = function (pageIndex = page) {
+        page = pageIndex;
         $http({
-            url: contextPath + 'products',
+            url: contextPath + 'v1/products',
             method: 'GET',
             params: {
                 p: pageIndex
@@ -29,6 +37,7 @@ angular.module('market-front', []).controller('indexController', function ($scop
         }).then(function (response) {
             console.log(response);
             $scope.productsPage = response.data;
+            $scope.paginationArray = $scope.generatePagesIndexes(1, $scope.productsPage.totalPages); //для отрисовки кнопок/страниц
         });
     };
 //вывод алерта
@@ -37,11 +46,23 @@ angular.module('market-front', []).controller('indexController', function ($scop
     };
 
     $scope.deleteId = function (product) {
-       $http.get(contextPath + 'products/delete/'+ product.id)
+       $http.delete(contextPath + 'v1/products/'+ product.id)
          .then(function (response) {
                $scope.loadProducts();
          });
     };
+
+    $scope.createNewProduct = function () {
+       $http.post(contextPath + 'v1/products', $scope.new_product)
+         .then(function successCallback (response) {
+                $scope.loadProducts($scope.productsPage.totalPages);
+                $scope.new_product = null;
+         }, function failureCallback (response) {//алерт если что-то не так
+                alert(response.data.message);
+       });
+    }
+
+    $scope.loadProducts();
 
     // $scope.wrongRequest = function () {
     // WRONG:
@@ -54,6 +75,12 @@ angular.module('market-front', []).controller('indexController', function ($scop
     //         reload();
     //     });
     // }
+ // $scope.loadProducts = function () {
+    //     $http.get(contextPath + 'products')
+    //         .then(function (response) {
+    //             console.log(response);
+    //             $scope.productsPage = response.data;
+    //         });
+    // };
 
-    $scope.loadProducts();
 });
