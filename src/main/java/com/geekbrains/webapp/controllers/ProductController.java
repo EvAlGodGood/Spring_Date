@@ -1,6 +1,7 @@
 package com.geekbrains.webapp.controllers;
 
 import com.geekbrains.webapp.dtos.ProductDto;
+import com.geekbrains.webapp.exceptions.ResourceNotFoundException;
 import com.geekbrains.webapp.model.Category;
 import com.geekbrains.webapp.model.Product;
 import com.geekbrains.webapp.repositories.ProductRepository;
@@ -16,25 +17,31 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@RequestMapping("/api/v1/products")
 @RequiredArgsConstructor
 public class ProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
 
-    @GetMapping("/products")
+    @GetMapping
     public Page<ProductDto> findAll(@RequestParam(defaultValue = "1", name = "p") int pageIndex) {
         if (pageIndex < 1) {
             pageIndex = 1;
         }
-        return productService.findAll(pageIndex - 1, 10).map(ProductDto::new);
+        return productService.findAll(pageIndex - 1, 5).map(ProductDto::new);
     }
+// Старый вариант без проверки на ошибку
+//    @GetMapping("/{id}")
+//    public ProductDto findById(@PathVariable Long id) {
+//        return new ProductDto(productService.findById(id).get());
+//    }
 
-    @GetMapping("/products/{id}")
+    @GetMapping("/{id}")
     public ProductDto findById(@PathVariable Long id) {
-        return new ProductDto(productService.findById(id).get());
+        return new ProductDto(productService.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product id = " + id + " not found")));
     }
 
-    @PostMapping("/products")
+    @PostMapping
     public ProductDto save(@RequestBody ProductDto productDto) {
         Product product = new Product();
         product.setPrice(productDto.getPrice());
@@ -45,7 +52,7 @@ public class ProductController {
         return new ProductDto(product);
     }
 
-    @GetMapping("/products/delete/{id}")
+    @DeleteMapping("/{id}")
     public void deleteById(@PathVariable Long id) {
         productService.deleteById(id);
     }
