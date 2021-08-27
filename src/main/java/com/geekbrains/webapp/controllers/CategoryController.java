@@ -16,13 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class CategoryController {
     private final CategoryService categoryService;
 
-//    @GetMapping("/{id}")
-//    public CategoryDto findById(@PathVariable Long id) {
-//        return new CategoryDto(categoryService.findByIdWithProducts(id).get());
-//    }
-
     @GetMapping("/{id}")
     public CategoryDto findById(@PathVariable Long id) {
-        return new CategoryDto(categoryService.findByIdWithProducts(id).orElseThrow(() -> new ResourceNotFoundException("Category id = " + id + " not found")));
+        return new CategoryDto(categoryService.findByIdWithProducts(id).orElseThrow(
+                () -> new ResourceNotFoundException("Category id = " + id + " not found")));
     }
 }
