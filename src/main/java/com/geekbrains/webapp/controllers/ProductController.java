@@ -75,16 +75,16 @@ public class ProductController {
         productService.updateProductFromDto(productDto);
     }
 
-    @GetMapping("/addToCart")
-    public void addToCart (ProductDto productDto) {
-        Order order = new Order();
-        order.setId(productDto.getId());
-        order.setPrice(productDto.getPrice());
-        order.setDate(dateFormat.format(calendar.getTime()));
-        order.setTitle(productDto.getTitle());
-        order.setCategory(productDto.getCategoryTitle());
-        System.out.println(order.toString());
-        //productCart.addToCart(order);
-    }
+//    @GetMapping("/addToCart")
+//    public void addToCart (ProductDto productDto) {
+//        Order order = new Order();
+//        order.setId(productDto.getId());
+//        order.setPrice(productDto.getPrice());
+//        order.setDate(dateFormat.format(calendar.getTime()));
+//        order.setTitle(productDto.getTitle());
+//        order.setCategory(productDto.getCategoryTitle());
+//        System.out.println(order.toString());
+//        productService.addToCart(order);
+//    }
 
 }

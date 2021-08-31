@@ -1,6 +1,7 @@
 package com.geekbrains.webapp.model;
 
 public class Order {
+
     private Long id_order;
     private Long id;
     private String title;

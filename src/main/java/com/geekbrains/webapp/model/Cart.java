@@ -1,12 +1,12 @@
-package com.geekbrains.webapp.repositories;
+package com.geekbrains.webapp.model;
 
-import com.geekbrains.webapp.model.Order;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class Cart {
@@ -29,16 +29,16 @@ public class Cart {
         }
     }
 
-    public void addToCart(Order order) {
-        productCart.add(order);
+    public Optional<Order> addToCart(Order order) {
+        return productCart.add(order);
     }
 
-    public List<Order> findAll() {
-        return productCart;
-    }
+//    public List<Order> findAll() {
+//        return productCart;
+//    }
 
-    public void removeById(Long id_order) {
-        productCart.remove(productCart.stream().filter(i -> i.getId().equals(id_order)).findFirst().get());
-    }
+//    public void removeById(Long id_order) {
+//        productCart.remove(productCart.stream().filter(i -> i.getId().equals(id_order)).findFirst().get());
+//    }
 
 }
