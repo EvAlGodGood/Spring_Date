@@ -1,4 +1,4 @@
-angular.module('market-front').controller('storeController', function ($scope, $http, $location) {
+angular.module('market-front').controller('storeController', function ($scope, $http, $location, $localStorage) {
     const contextPath = 'http://localhost:8189/market/';
     let currentPageIndex = 1;
 
@@ -14,6 +14,14 @@ angular.module('market-front').controller('storeController', function ($scope, $
             console.log(response);
             $scope.productsPage = response.data;
             $scope.paginationArray = $scope.generatePagesIndexes(1, $scope.productsPage.totalPages);
+        });
+    };
+
+    $scope.addToCart = function (productId) {
+        $http({
+            url: contextPath + 'api/v1/cart/' + $localStorage.webMarketGuestCartId + '/add/' + productId,
+            method: 'GET'
+        }).then(function (response) {
         });
     };
 

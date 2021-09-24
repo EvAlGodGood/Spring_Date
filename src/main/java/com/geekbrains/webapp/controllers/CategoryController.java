@@ -1,7 +1,6 @@
 package com.geekbrains.webapp.controllers;
 
 import com.geekbrains.webapp.dtos.CategoryDto;
-import com.geekbrains.webapp.dtos.ProductDto;
 import com.geekbrains.webapp.exceptions.ResourceNotFoundException;
 import com.geekbrains.webapp.services.CategoryService;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +17,6 @@ public class CategoryController {
 
     @GetMapping("/{id}")
     public CategoryDto findById(@PathVariable Long id) {
-        return new CategoryDto(categoryService.findByIdWithProducts(id).orElseThrow(
-                () -> new ResourceNotFoundException("Category id = " + id + " not found")));
+        return new CategoryDto(categoryService.findByIdWithProducts(id).orElseThrow(() -> new ResourceNotFoundException("Category id = " + id + " not found")));
     }
 }

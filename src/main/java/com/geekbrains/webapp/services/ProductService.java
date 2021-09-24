@@ -6,11 +6,15 @@ import com.geekbrains.webapp.model.Category;
 import com.geekbrains.webapp.model.Product;
 import com.geekbrains.webapp.repositories.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,6 +22,7 @@ import java.util.Optional;
 public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryService categoryService;
+
 
     public Page<Product> findAll(int pageIndex, int pageSize) {
         return productRepository.findAll(PageRequest.of(pageIndex, pageSize));
@@ -31,10 +36,6 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public void deleteById(Long id) {
-        productRepository.deleteById(id);
-    }
-
     @Transactional
     public void updateProductFromDto(ProductDto productDto) {
         Product product = findById(productDto.getId()).orElseThrow(() -> new ResourceNotFoundException("Product id = " + productDto.getId() + " not found"));
@@ -46,4 +47,7 @@ public class ProductService {
         }
     }
 
+    public Optional<Product> findByTitle(String title) {
+        return productRepository.findByTitle(title);
+    }
 }

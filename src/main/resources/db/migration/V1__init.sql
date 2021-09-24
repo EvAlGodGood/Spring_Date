@@ -1,57 +1,107 @@
 create table categories
 (
-    id    bigserial primary key,
-    title varchar(255)
+    id         bigserial primary key,
+    title      varchar(255),
+    created_at timestamp default current_timestamp,
+    updated_at timestamp default current_timestamp
 );
 insert into categories (title)
-values ('Food'),
-       ('Inventory');
+values ('Food');
 
 create table products
 (
     id          bigserial primary key,
     title       varchar(255),
     price       int,
-    category_id bigint references categories (id)
+    category_id bigint references categories (id),
+    created_at  timestamp default current_timestamp,
+    updated_at  timestamp default current_timestamp
 );
 insert into products (title, price, category_id)
-values ('Bread', 28, 1),
+values ('Bread', 25, 1),
        ('Milk', 80, 1),
-       ('Salt', 12, 1),
-       ('Vinegar', 150, 1),
-       ('Mayonnaise', 25, 1),
        ('Cheese', 450, 1),
-       ('Rake', 1280, 2),
-       ('Shovel', 800, 2),
-       ('Axe', 2570, 2),
-       ('Secateurs', 1500, 2),
-       ('Bread', 28, 1),
-       ('Milk_2', 80, 1),
-       ('Salt_2', 12, 1),
-       ('Vinegar_2', 150, 1),
-       ('Mayonnaise_2', 25, 1),
-       ('Cheese_2', 450, 1),
-       ('Rake_2', 1280, 2),
-       ('Shovel_2', 800, 2),
-       ('Axe_2', 2570, 2),
-       ('Secateurs_2', 1500, 2),
-       ('Bread_3', 28, 1),
-       ('Milk_3', 80, 1),
-       ('Salt_3', 12, 1),
-       ('Vinegar_3', 150, 1),
-       ('Mayonnaise_3', 25, 1),
-       ('Cheese_3', 450, 1),
-       ('Rake_3', 1280, 2),
-       ('Shovel_3', 800, 2),
-       ('Axe_3', 2570, 2),
-       ('Secateurs_4', 1500, 2),
-       ('Bread_4', 28, 1),
-       ('Milk_4', 80, 1),
-       ('Salt_4', 12, 1),
-       ('Vinegar_4', 150, 1),
-       ('Mayonnaise_4', 25, 1),
-       ('Cheese_4', 450, 1),
-       ('Rake_4', 1280, 2),
-       ('Shovel_4', 800, 2),
-       ('Axe_4', 2570, 2),
-       ('Secateurs_4', 1500, 2);
+       ('Cheese1', 450, 1),
+       ('Cheese2', 450, 1),
+       ('Cheese3', 450, 1),
+       ('Cheese4', 450, 1),
+       ('Cheese5', 450, 1),
+       ('Cheese6', 450, 1),
+       ('Cheese7', 450, 1),
+       ('Cheese8', 450, 1),
+       ('Cheese9', 450, 1),
+       ('Cheese10', 450, 1),
+       ('Cheese11', 450, 1),
+       ('Cheese12', 450, 1),
+       ('Cheese13', 450, 1),
+       ('Cheese14', 450, 1),
+       ('Cheese15', 450, 1),
+       ('Cheese16', 450, 1),
+       ('Cheese17', 450, 1),
+       ('Cheese18', 450, 1);
+
+create table users
+(
+    id         bigserial primary key,
+    username   varchar(30) not null,
+    password   varchar(80) not null,
+    email      varchar(50) unique,
+    created_at timestamp default current_timestamp,
+    updated_at timestamp default current_timestamp
+);
+
+create table roles
+(
+    id         bigserial primary key,
+    name       varchar(50) not null,
+    created_at timestamp default current_timestamp,
+    updated_at timestamp default current_timestamp
+);
+
+CREATE TABLE users_roles
+(
+    user_id bigint not null references users (id),
+    role_id bigint not null references roles (id),
+    primary key (user_id, role_id)
+);
+
+insert into roles (name)
+values ('ROLE_USER'),
+       ('ROLE_ADMIN');
+
+insert into users (username, password, email)
+values ('user', '$2a$04$Fx/SX9.BAvtPlMyIIqqFx.hLY2Xp8nnhpzvEEVINvVpwIPbA3v/.i', 'bob_johnson@gmail.com'),
+       ('admin', '$2a$04$Fx/SX9.BAvtPlMyIIqqFx.hLY2Xp8nnhpzvEEVINvVpwIPbA3v/.i', 'john_johnson@gmail.com');
+
+insert into users_roles (user_id, role_id)
+values (1, 1),
+       (2, 2);
+
+create table orders
+(
+    id         bigserial primary key,
+    user_id    bigint references users (id),
+    address    varchar(255),
+    phone      varchar(255),
+    price      integer,
+    created_at timestamp default current_timestamp,
+    updated_at timestamp default current_timestamp
+);
+
+create table order_items
+(
+    id                bigserial primary key,
+    order_id          bigint references orders (id),
+    product_id        bigint references products (id),
+    quantity          integer,
+    price_per_product integer,
+    price             integer,
+    created_at        timestamp default current_timestamp,
+    updated_at        timestamp default current_timestamp
+);
+
+insert into orders (user_id, address, phone, price)
+values (1, '1111', '1111', 100);
+
+insert into order_items (order_id, product_id, quantity, price_per_product, price)
+values (1, 1, 4, 25, 100);

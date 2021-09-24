@@ -1,46 +1,48 @@
 package com.geekbrains.webapp.controllers;
 
-import com.geekbrains.webapp.dtos.CategoryDto;
-import com.geekbrains.webapp.dtos.ProductDto;
-import com.geekbrains.webapp.exceptions.ResourceNotFoundException;
-import com.geekbrains.webapp.model.Cart;
-import com.geekbrains.webapp.model.Order;
+import com.geekbrains.webapp.dtos.StringResponse;
 import com.geekbrains.webapp.services.CartService;
-import com.geekbrains.webapp.services.CategoryService;
-import com.sun.xml.bind.Messages;
+import com.geekbrains.webapp.utils.Cart;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.text.DateFormat;
-import java.util.Calendar;
+import java.security.Principal;
+import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/carts")
+@RequestMapping("/api/v1/cart")
 @RequiredArgsConstructor
 public class CartController {
     private final CartService cartService;
-    Calendar calendar;
-    DateFormat dateFormat;
-//    @GetMapping("/{id}")
-//    public Cart findById(@PathVariable Long id) {
-//        return new Cart(cartService.findByIdWithCart(id).orElseThrow(
-//                    () -> new ResourceNotFoundException("Cart id = " + id + " not found")));
-//
-//    }
 
-    @GetMapping("/addToCart")
-    public void addToCart (ProductDto productDto) {
-        Order order = new Order();
-        order.setId(productDto.getId());
-        order.setPrice(productDto.getPrice());
-        order.setDate(dateFormat.format(calendar.getTime()));
-        order.setTitle(productDto.getTitle());
-        order.setCategory(productDto.getCategoryTitle());
-        System.out.println(order.toString());
-        cartService.addToCart(order);
+    @GetMapping("/generate")
+    public StringResponse generateCartUuid() {
+        return new StringResponse(UUID.randomUUID().toString());
     }
 
+    @GetMapping("/{uuid}/merge")
+    public void mergeCarts(Principal principal, @PathVariable String uuid) {
+        // TODO кто-нибудь может додуматься это вызвать без токена
+        cartService.merge(principal, uuid);
+    }
+
+    @GetMapping("/{uuid}")
+    public Cart getCartForCurrentUser(Principal principal, @PathVariable String uuid) {
+        return cartService.getCartForCurrentUser(principal, uuid);
+    }
+
+    @GetMapping("/{uuid}/add/{productId}")
+    public void addToCart(Principal principal, @PathVariable String uuid, @PathVariable Long productId) {
+        cartService.addItem(principal, uuid, productId);
+    }
+
+    @GetMapping("/{uuid}/decrement/{productId}")
+    public void decrementItem(Principal principal, @PathVariable String uuid, @PathVariable Long productId) {
+        cartService.decrementItem(principal, uuid, productId);
+    }
+
+    @GetMapping("/{uuid}/remove/{productId}")
+    public void removeItem(Principal principal, @PathVariable String uuid, @PathVariable Long productId) {
+        cartService.removeItem(principal, uuid, productId);
+    }
 }

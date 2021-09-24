@@ -1,83 +1,59 @@
 package com.geekbrains.webapp.model;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@Entity
+@Table(name = "orders")
+@NamedEntityGraph(
+        name = "orders.for-front",
+        attributeNodes = {
+                @NamedAttributeNode(value = "items", subgraph = "items-products")
+        },
+        subgraphs = {
+                @NamedSubgraph(
+                        name = "items-products",
+                        attributeNodes = {
+                                @NamedAttributeNode("product")
+                        }
+                )
+        }
+)
 public class Order {
-
-    private Long id_order;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
-    private String title;
-    private String date;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderItem> items;
+
+    @Column(name = "address")
+    private String address;
+
+    @Column(name = "phone")
+    private String phone;
+
+    @Column(name = "price")
     private int price;
-    private String category;
 
-    public Long getId_Order() {
-        return id_order;
-    }
+    @CreationTimestamp
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
-    public void setId_Order(Long id) {
-        this.id = id_order;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDate() {
-        return date;
-    }
-
-    public void setDate(String date) {
-        this.date = date;
-    }
-
-    public int getPrice() {
-        return price;
-    }
-
-    public void setPrice(int price) {
-        this.price = price;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
-    public Order() {
-    }
-
-    public Order(Long id_order, Long id, String title, String date, int price, String category) {
-        this.id_order = id_order;
-        this.id = id;
-        this.title = title;
-        this.date = date;
-        this.price = price;
-        this.category = category;
-    }
-
-    @Override
-    public String toString() {
-        return "\n Order{" +
-                ", id_order=" + id_order +
-                ", id=" + id +
-                ", title=" + title +
-                ", date=" + date +
-                ", price=" + price +
-                ", category=" + category +
-                "}";
-    }
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 }

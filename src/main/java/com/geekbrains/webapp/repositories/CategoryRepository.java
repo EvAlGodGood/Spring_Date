@@ -1,9 +1,13 @@
 package com.geekbrains.webapp.repositories;
 
 import com.geekbrains.webapp.model.Category;
+import com.geekbrains.webapp.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+
+import javax.swing.text.html.Option;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
